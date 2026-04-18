@@ -1,6 +1,8 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import { Reveal } from "./Reveal";
 import { SectionHeader } from "./SectionHeader";
+import { SectionSticker } from "./SectionSticker";
 import { Tag } from "./Tag";
 import { projectEntries, type ProjectEntry } from "../data/projects";
 
@@ -89,33 +91,78 @@ function CardInner({ project }: { project: ProjectEntry }) {
   );
 }
 
-function ProjectCard({ project }: { project: ProjectEntry }) {
-  return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
-      className="group h-full"
-    >
-      {project.url ? (
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`${project.name} — open site`}
-          className="block h-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <CardInner project={project} />
-        </a>
-      ) : (
-        <CardInner project={project} />
+type ProjectCardProps = {
+  project: ProjectEntry;
+  isHovered: boolean;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
+};
+
+function ProjectCard({
+  project,
+  isHovered,
+  onHoverStart,
+  onHoverEnd,
+}: ProjectCardProps) {
+  const highlight = (
+    <AnimatePresence>
+      {isHovered && (
+        <motion.span
+          aria-hidden="true"
+          className="absolute inset-0 block h-full w-full rounded-lg bg-accent/10"
+          layoutId="projectHoverBackground"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { duration: 0.15 } }}
+          exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.2 } }}
+        />
       )}
-    </motion.div>
+    </AnimatePresence>
+  );
+
+  const commonClass =
+    "group relative block h-full w-full p-2 focus-visible:outline-none";
+
+  if (project.url) {
+    return (
+      <a
+        href={project.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`${project.name} — open site`}
+        onMouseEnter={onHoverStart}
+        onMouseLeave={onHoverEnd}
+        onFocus={onHoverStart}
+        onBlur={onHoverEnd}
+        className={commonClass}
+      >
+        {highlight}
+        <div className="relative z-10 h-full">
+          <CardInner project={project} />
+        </div>
+      </a>
+    );
+  }
+
+  return (
+    <div
+      onMouseEnter={onHoverStart}
+      onMouseLeave={onHoverEnd}
+      className={commonClass}
+    >
+      {highlight}
+      <div className="relative z-10 h-full">
+        <CardInner project={project} />
+      </div>
+    </div>
   );
 }
 
 export function Projects() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   return (
     <section id="projects" className="relative py-20 md:py-24 px-6 md:px-8">
+      <SectionSticker label="Projects" />
       <div className="max-w-5xl mx-auto">
         <SectionHeader
           eyebrow="Selected Work"
@@ -123,10 +170,15 @@ export function Projects() {
           subheading="A selection of products I've shipped end-to-end."
         />
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
           {projectEntries.map((project, index) => (
             <Reveal key={project.name} delay={index * 0.06} className="h-full">
-              <ProjectCard project={project} />
+              <ProjectCard
+                project={project}
+                isHovered={hoveredIndex === index}
+                onHoverStart={() => setHoveredIndex(index)}
+                onHoverEnd={() => setHoveredIndex(null)}
+              />
             </Reveal>
           ))}
         </div>

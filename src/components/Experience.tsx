@@ -1,25 +1,46 @@
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Reveal } from "./Reveal";
 import { SectionHeader } from "./SectionHeader";
+import { SectionSticker } from "./SectionSticker";
 import { Tag } from "./Tag";
 import { experienceEntries } from "../data/experience";
 
-
 export function Experience() {
+  const railRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: railRef,
+    offset: ["start 75%", "end 60%"],
+  });
+  const fillScale = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 28,
+    mass: 0.5,
+  });
+  const fillOpacity = useTransform(scrollYProgress, [0, 0.02, 1], [0, 1, 1]);
+
   return (
     <section
       id="experience"
-      className="relative py-20 md:py-24 px-6 md:px-8 bg-bg-secondary/60"
+      className="relative bg-bg-secondary/60 px-6 py-20 md:px-8 md:py-24"
     >
-      <div className="max-w-5xl mx-auto">
-        <SectionHeader
-          eyebrow="Experience"
-          heading="Where I've worked."
-        />
+      <SectionSticker label="Experience" />
+      <div className="mx-auto max-w-5xl">
+        <SectionHeader eyebrow="Experience" heading="Where I've worked." />
 
-        <div className="relative mt-10 md:mt-12 pl-8 md:pl-10">
+        <div ref={railRef} className="relative mt-10 pl-8 md:mt-12 md:pl-10">
           <div
-            className="absolute left-2 md:left-3 top-2 bottom-0 w-px bg-gradient-to-b from-accent/40 via-border to-transparent"
+            className="absolute bottom-0 left-2 top-2 w-px bg-border md:left-3"
             aria-hidden="true"
+          />
+          <motion.div
+            aria-hidden="true"
+            className="absolute left-2 top-2 w-px origin-top bg-gradient-to-b from-accent via-accent/70 to-accent/30 md:left-3"
+            style={{
+              scaleY: fillScale,
+              opacity: fillOpacity,
+              bottom: 0,
+            }}
           />
 
           <ol className="space-y-10">
@@ -32,7 +53,7 @@ export function Experience() {
                 <div className="group relative">
                   <span
                     aria-hidden="true"
-                    className="absolute -left-[27px] md:-left-[33px] top-1.5 flex h-3 w-3 items-center justify-center"
+                    className="absolute -left-[27px] top-1.5 flex h-3 w-3 items-center justify-center md:-left-[33px]"
                   >
                     <span className="absolute inset-0 rounded-full border border-accent/50 bg-bg-primary transition-transform group-hover:scale-125" />
                     <span className="relative h-1.5 w-1.5 rounded-full bg-accent" />
@@ -43,7 +64,7 @@ export function Experience() {
                   </div>
 
                   <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <h3 className="text-base md:text-lg font-semibold tracking-tight text-text-primary">
+                    <h3 className="text-base font-semibold tracking-tight text-text-primary md:text-lg">
                       {entry.role}
                     </h3>
                     <span className="text-text-muted">·</span>
@@ -52,16 +73,18 @@ export function Experience() {
                         href={entry.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-sm md:text-base text-accent hover:text-accent-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
+                        className="link-underline rounded-sm text-sm text-accent transition-colors hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-base"
                       >
                         {entry.company}
                       </a>
                     ) : (
-                      <span className="text-sm md:text-base text-accent">{entry.company}</span>
+                      <span className="text-sm text-accent md:text-base">
+                        {entry.company}
+                      </span>
                     )}
                   </div>
 
-                  <p className="mt-3 max-w-2xl text-sm text-text-secondary leading-editorial">
+                  <p className="mt-3 max-w-2xl text-sm leading-editorial text-text-secondary">
                     {entry.description}
                   </p>
 

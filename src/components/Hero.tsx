@@ -1,7 +1,17 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "../config";
 import { stackGroups } from "../data/stack";
+import { ScribbleUnderline } from "./ScribbleUnderline";
 
 function GitHubIcon() {
   return (
@@ -103,17 +113,17 @@ function CheckIcon() {
 
 function StackPanel() {
   return (
-    <div className="rounded-md border border-border bg-bg-card shadow-paper p-5">
-      <div className="flex items-center gap-2.5 mb-4">
+    <div className="rounded-md border border-border bg-bg-card p-5 shadow-paper">
+      <div className="mb-4 flex items-center gap-2.5">
         <span className="h-px w-5 bg-accent/50" />
-        <h3 className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium">
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
           Tech Stack
         </h3>
       </div>
       <div className="space-y-3.5">
         {stackGroups.map((group) => (
           <div key={group.label}>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-text-muted font-medium">
+            <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
               {group.label}
             </div>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -133,14 +143,126 @@ function StackPanel() {
   );
 }
 
-function AmbientBackground() {
+type AnimatedHeadingProps = {
+  lines: string[];
+  className?: string;
+};
+
+function AnimatedHeading({ lines, className }: AnimatedHeadingProps) {
   const prefersReducedMotion = useReducedMotion();
-  const animationDuration = prefersReducedMotion ? 0 : 22;
+  const staggeredTransition = {
+    duration: 0.8,
+    ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+  };
+
+  if (prefersReducedMotion) {
+    return (
+      <h1 className={className}>
+        {lines.map((line, i) => (
+          <span key={i} className={i === 1 ? "text-accent" : undefined}>
+            {i > 0 && <br />}
+            {line}
+          </span>
+        ))}
+      </h1>
+    );
+  }
 
   return (
-    <div
+    <motion.h1
+      className={className}
+      initial="hidden"
+      animate="visible"
+      transition={{ staggerChildren: 0.025, delayChildren: 0.15 }}
+    >
+      {lines.map((line, lineIdx) => (
+        <span
+          key={lineIdx}
+          className={`inline-block ${lineIdx === 1 ? "text-accent" : ""}`}
+        >
+          {lineIdx > 0 && <br />}
+          {Array.from(line).map((char, i) => (
+            <motion.span
+              key={`${lineIdx}-${i}`}
+              className="inline-block"
+              variants={{
+                hidden: { opacity: 0, y: "0.4em" },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={staggeredTransition}
+              style={{ willChange: "transform" }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </span>
+      ))}
+    </motion.h1>
+  );
+}
+
+type CursorSpotlightProps = {
+  targetRef: React.RefObject<HTMLElement>;
+};
+
+function CursorSpotlight({ targetRef }: CursorSpotlightProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const x = useMotionValue(-1000);
+  const y = useMotionValue(-1000);
+  const springX = useSpring(x, { stiffness: 140, damping: 22, mass: 0.4 });
+  const springY = useSpring(y, { stiffness: 140, damping: 22, mass: 0.4 });
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const onMove = (e: MouseEvent) => {
+      const rect = targetRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      x.set(e.clientX - rect.left);
+      y.set(e.clientY - rect.top);
+    };
+    const onLeave = () => {
+      x.set(-1000);
+      y.set(-1000);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseleave", onLeave);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+    };
+  }, [prefersReducedMotion, targetRef, x, y]);
+
+  const background = useMotionTemplate`radial-gradient(480px circle at ${springX}px ${springY}px, rgba(255, 250, 235, 0.55), transparent 55%)`;
+
+  if (prefersReducedMotion) return null;
+
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0"
+      style={{ background, mixBlendMode: "soft-light" }}
+    />
+  );
+}
+
+type AmbientBackgroundProps = {
+  sectionRef: React.RefObject<HTMLElement>;
+};
+
+function AmbientBackground({ sectionRef }: AmbientBackgroundProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const animationDuration = prefersReducedMotion ? 0 : 22;
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
+  return (
+    <motion.div
       className="pointer-events-none absolute inset-0 overflow-hidden"
       aria-hidden="true"
+      style={{ opacity: prefersReducedMotion ? 1 : opacity }}
     >
       <motion.div
         className="absolute -top-24 -left-16 h-[380px] w-[380px] rounded-full bg-[#EADFC7]/70 blur-3xl"
@@ -190,12 +312,13 @@ function AmbientBackground() {
             "radial-gradient(circle at center, black, transparent 70%)",
         }}
       />
-    </div>
+    </motion.div>
   );
 }
 
 export function Hero() {
   const [emailCopied, setEmailCopied] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const staggeredTransition = {
     duration: 0.8,
@@ -215,11 +338,13 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex items-center py-14 md:py-16 px-6 md:px-8 min-h-[82vh]"
+      ref={sectionRef}
+      className="relative flex min-h-[82vh] items-center px-6 py-14 md:px-8 md:py-16"
     >
-      <AmbientBackground />
+      <AmbientBackground sectionRef={sectionRef} />
+      <CursorSpotlight targetRef={sectionRef} />
 
-      <div className="relative z-10 max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12 items-center">
+      <div className="relative z-10 mx-auto grid w-full max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-7">
           <div className="flex items-center gap-5">
             <motion.img
@@ -228,25 +353,19 @@ export function Hero() {
               transition={{ ...staggeredTransition, delay: 0.2 }}
               src={siteConfig.photoPath}
               alt={siteConfig.name}
-              className="h-24 w-24 md:h-32 md:w-32 shrink-0 rounded-full object-cover border border-accent/25 shadow-paper"
+              className="h-24 w-24 shrink-0 rounded-full border border-accent/25 object-cover shadow-paper md:h-32 md:w-32"
             />
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...staggeredTransition, delay: 0.15 }}
+            <AnimatedHeading
+              lines={["Byambajav", "Munkhbayar"]}
               className="text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.05] tracking-tighter text-text-primary"
-            >
-              Byambajav
-              <br />
-              <span className="text-accent">Munkhbayar</span>
-            </motion.h1>
+            />
           </div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...staggeredTransition, delay: 0.28 }}
-            className="mt-4 text-base md:text-lg text-text-secondary tracking-tight"
+            className="mt-4 text-base tracking-tight text-text-secondary md:text-lg"
           >
             Software Engineer
           </motion.p>
@@ -255,15 +374,15 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...staggeredTransition, delay: 0.38 }}
-            className="mt-5 max-w-xl text-sm md:text-base text-text-secondary leading-editorial"
+            className="mt-5 max-w-xl text-sm leading-editorial text-text-secondary md:text-base"
           >
             Over the last few years I've worked on government accounting,
             pharmacy ecommerce, a workforce SaaS for SEPA-zone businesses, and
             — more recently — an LLM platform and AI agents. My work starts
-            with the <span className="text-text-primary">domain</span>, not
-            the framework.{" "}
-            <span className="text-text-primary">Clean architecture</span> by
-            habit, tech-agnostic by choice.
+            with the <ScribbleUnderline delay={0.2}>domain</ScribbleUnderline>,
+            not the framework.{" "}
+            <ScribbleUnderline delay={0.5}>Clean architecture</ScribbleUnderline>{" "}
+            by habit, tech-agnostic by choice.
           </motion.p>
 
           <motion.div
@@ -272,9 +391,9 @@ export function Hero() {
             transition={{ ...staggeredTransition, delay: 0.43 }}
             className="mt-6"
           >
-            <div className="flex items-center gap-2.5 mb-3">
+            <div className="mb-3 flex items-center gap-2.5">
               <span className="h-px w-5 bg-accent/50" />
-              <h3 className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium">
+              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
                 Education
               </h3>
             </div>
@@ -304,59 +423,81 @@ export function Hero() {
             transition={{ ...staggeredTransition, delay: 0.52 }}
             className="mt-7"
           >
-            <div className="flex items-center gap-2.5 mb-3">
+            <div className="mb-3 flex items-center gap-2.5">
               <span className="h-px w-5 bg-accent/50" />
-              <h3 className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium">
+              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
                 Contact
               </h3>
             </div>
             <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-            <button
-              type="button"
-              onClick={handleCopyEmail}
-              aria-label={emailCopied ? "Email copied" : "Copy email address"}
-              className="relative group flex items-center gap-2.5 pl-2 pr-8 py-1.5 rounded-md transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent text-left"
-            >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border text-text-secondary transition-colors group-hover:border-accent/40 group-hover:text-accent">
-                <EmailIcon />
-              </span>
-              <span className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">
-                  {emailCopied ? "Copied" : "Email"}
-                </span>
-                <span className="text-xs text-text-primary whitespace-nowrap transition-colors group-hover:text-accent">
-                  {siteConfig.email}
-                </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className={`absolute top-1.5 right-2 transition-opacity ${
-                  emailCopied
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100"
-                } text-text-muted group-hover:text-accent`}
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                aria-label={emailCopied ? "Email copied" : "Copy email address"}
+                className="group relative flex items-center gap-2.5 rounded-md py-1.5 pl-2 pr-8 text-left transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
-                {emailCopied ? <CheckIcon /> : <CopyIcon />}
-              </span>
-            </button>
-            <a
-              href={siteConfig.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-center gap-2.5 px-2 py-1.5 rounded-md transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border text-text-secondary transition-colors group-hover:border-accent/40 group-hover:text-accent">
-                <GitHubIcon />
-              </span>
-              <span className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">
-                  GitHub
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border text-text-secondary transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <EmailIcon />
                 </span>
-                <span className="text-xs text-text-primary whitespace-nowrap transition-colors group-hover:text-accent">
-                  {siteConfig.githubUrl.replace(/^https?:\/\//, "")}
+                <span className="flex flex-col">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">
+                    {emailCopied ? "Copied" : "Email"}
+                  </span>
+                  <span className="whitespace-nowrap text-xs text-text-primary transition-colors group-hover:text-accent">
+                    {siteConfig.email}
+                  </span>
                 </span>
-              </span>
-            </a>
+                <span
+                  aria-hidden="true"
+                  className={`absolute right-2 top-1.5 text-text-muted group-hover:text-accent ${
+                    emailCopied ? "" : "transition-opacity opacity-0 group-hover:opacity-100"
+                  }`}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {emailCopied ? (
+                      <motion.span
+                        key="check"
+                        initial={{ scale: 0.3, opacity: 0, rotate: -20 }}
+                        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                        exit={{ scale: 0.6, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 460, damping: 14 }}
+                        className="inline-flex"
+                      >
+                        <CheckIcon />
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="copy"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="inline-flex"
+                      >
+                        <CopyIcon />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </span>
+              </button>
+              <a
+                href={siteConfig.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border text-text-secondary transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <GitHubIcon />
+                </span>
+                <span className="flex flex-col">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">
+                    GitHub
+                  </span>
+                  <span className="whitespace-nowrap text-xs text-text-primary transition-colors group-hover:text-accent">
+                    {siteConfig.githubUrl.replace(/^https?:\/\//, "")}
+                  </span>
+                </span>
+              </a>
             </div>
           </motion.div>
         </div>

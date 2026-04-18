@@ -49,7 +49,7 @@ export const projectEntries: ProjectEntry[] = [
     logo: "logos/chimege-reader.png",
     name: "Chimege Reader",
     description:
-      "Mongolian text-to-speech product. Several voices, including ones with emotional expression (happy, sad, angry) — unusual for Mongolian TTS.",
+      "Mongolian text-to-speech product with several voices, including ones capable of emotional expressions (giggling, angry, sigh etc).",
     tags: ["Python", "FastAPI", "TTS"],
     url: "https://reader.chimege.com",
   },
