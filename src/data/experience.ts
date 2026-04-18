@@ -30,7 +30,7 @@ export const experienceEntries: ExperienceEntry[] = [
   {
     period: "2024 — 2025",
     company: "CoreMind LLC",
-    url: "https://emonos.mn",
+    url: "https://www.coremind.mn",
     role: "Senior Software Engineer",
     description:
       "Built emonos.mn, a pharmacy ecommerce platform used widely in Mongolia. Also shipped the logistics backend, the rider's mobile app, and an inventory system for pharmacy chains.",
@@ -39,7 +39,7 @@ export const experienceEntries: ExperienceEntry[] = [
   {
     period: "2020 — 2024",
     company: "Erin Systems LLC",
-    url: "https://gastromatic.com",
+    url: "https://erin.systems",
     role: "Fullstack Engineer · Development Manager",
     description:
       "I was able to contribute to Gastromatic, a workforce management SaaS for SEPA-zone businesses, building its customer-relations and digital-contract microservices. I also led engineering on e-accounting.mojha.gov.mn (accounting platform for Mongolia's Ministry of Justice and Internal Affairs) and contributed to an LMS called Jarvis.",
