@@ -19,7 +19,7 @@ export default {
         text: {
           primary: "#1A1A18",
           secondary: "#4A4843",
-          muted: "#8A8680",
+          muted: "#70695F",
         },
         border: {
           DEFAULT: "rgba(26, 26, 24, 0.10)",

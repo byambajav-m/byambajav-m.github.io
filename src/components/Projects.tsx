@@ -35,6 +35,7 @@ function getDomain(url?: string): string | undefined {
 
 function CardInner({ project }: { project: ProjectEntry }) {
   const domain = getDomain(project.url);
+  const subtitle = domain ?? project.access;
 
   return (
     <div className="relative flex h-full flex-col rounded-md border border-border bg-bg-card p-5 md:p-6 shadow-paper transition-all duration-300 group-hover:border-accent/30 group-hover:shadow-[0_18px_40px_-18px_rgba(26,26,24,0.20)]">
@@ -51,6 +52,13 @@ function CardInner({ project }: { project: ProjectEntry }) {
               alt=""
               className="h-full w-full object-contain p-1.5"
             />
+          ) : project.monogram ? (
+            <span
+              aria-hidden="true"
+              className="font-mono text-[13px] font-semibold tracking-tight text-text-primary"
+            >
+              {project.monogram}
+            </span>
           ) : (
             <span className="text-xl" aria-hidden="true">
               {project.icon}
@@ -71,9 +79,9 @@ function CardInner({ project }: { project: ProjectEntry }) {
         <h3 className="text-base md:text-[17px] font-semibold tracking-tight text-text-primary transition-colors group-hover:text-accent">
           {project.name}
         </h3>
-        {domain && (
+        {subtitle && (
           <div className="mt-0.5 text-[11px] font-mono text-text-muted">
-            {domain}
+            {subtitle}
           </div>
         )}
       </div>
@@ -82,11 +90,13 @@ function CardInner({ project }: { project: ProjectEntry }) {
         {project.description}
       </p>
 
-      <div className="mt-auto pt-5 flex flex-wrap gap-1.5">
-        {project.tags.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
-        ))}
-      </div>
+      {project.tags.length > 0 && (
+        <div className="mt-auto pt-5 flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -109,7 +119,7 @@ function ProjectCard({
       {isHovered && (
         <motion.span
           aria-hidden="true"
-          className="absolute inset-0 block h-full w-full rounded-lg bg-accent/10"
+          className="absolute inset-0 block h-full w-full rounded-md bg-accent/10"
           layoutId="projectHoverBackground"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { duration: 0.15 } }}
@@ -161,7 +171,7 @@ export function Projects() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section id="projects" className="relative py-20 md:py-24 px-6 md:px-8">
+    <section id="projects" className="relative scroll-mt-16 py-20 md:py-24 px-6 md:px-8">
       <SectionSticker label="Projects" />
       <div className="max-w-5xl mx-auto">
         <SectionHeader

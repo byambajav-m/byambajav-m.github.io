@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "../config";
 import { stackGroups } from "../data/stack";
 import { ScribbleUnderline } from "./ScribbleUnderline";
+import { Tag } from "./Tag";
 
 function GitHubIcon() {
   return (
@@ -114,10 +115,10 @@ function CheckIcon() {
 function StackPanel() {
   return (
     <div className="rounded-md border border-border bg-bg-card p-5 shadow-paper">
-      <div className="mb-4 flex items-center gap-2.5">
-        <span className="h-px w-5 bg-accent/50" />
-        <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
-          Tech Stack
+      <div className="mb-4 flex items-center gap-3">
+        <span className="h-px w-6 bg-accent/50" />
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
+          Approach &amp; Stack
         </h3>
       </div>
       <div className="space-y-3.5">
@@ -128,16 +129,41 @@ function StackPanel() {
             </div>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {group.items.map((item) => (
-                <span
-                  key={item}
-                  className="inline-flex items-center rounded-sm border border-border bg-bg-secondary/60 px-2 py-0.5 text-[11px] text-text-primary"
-                >
-                  {item}
-                </span>
+                <Tag key={item}>{item}</Tag>
               ))}
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function StatusPanel() {
+  return (
+    <div className="rounded-md border border-border bg-bg-card p-5 shadow-paper">
+      <div className="mb-3 flex items-center gap-3">
+        <span className="h-px w-6 bg-accent/50" />
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
+          Currently
+        </h3>
+      </div>
+      <div className="space-y-2.5 text-sm leading-editorial text-text-secondary">
+        <div className="flex items-start gap-2">
+          <span
+            aria-hidden="true"
+            className="relative mt-[0.55rem] flex h-1.5 w-1.5 shrink-0"
+          >
+            <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
+            <span className="relative h-1.5 w-1.5 rounded-full bg-accent" />
+          </span>
+          <p>
+            At <span className="text-text-primary">Chimege</span> — building an agent-orchestration and RAG system.
+          </p>
+        </div>
+        <p className="pl-[14px] text-text-muted">
+          Based in Ulaanbaatar · open to remote.
+        </p>
       </div>
     </div>
   );
@@ -339,12 +365,12 @@ export function Hero() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative flex min-h-[82vh] items-center px-6 py-14 md:px-8 md:py-16"
+      className="relative flex min-h-[88vh] items-center px-6 pb-14 pt-24 md:px-8 md:pb-16 md:pt-28"
     >
       <AmbientBackground sectionRef={sectionRef} />
       <CursorSpotlight targetRef={sectionRef} />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-12">
+      <div className="relative z-10 mx-auto grid w-full max-w-5xl grid-cols-1 items-start gap-10 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-7">
           <div className="flex items-center gap-5">
             <motion.img
@@ -367,20 +393,26 @@ export function Hero() {
             transition={{ ...staggeredTransition, delay: 0.28 }}
             className="mt-4 text-base tracking-tight text-text-secondary md:text-lg"
           >
-            Software Engineer
+            Senior Software Engineer
           </motion.p>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...staggeredTransition, delay: 0.38 }}
-            className="mt-5 max-w-xl text-sm leading-editorial text-text-secondary md:text-base"
+            className="mt-5 max-w-xl text-base leading-editorial text-text-primary md:text-lg"
           >
-            Over the last few years I've worked on government accounting,
-            pharmacy ecommerce, a workforce SaaS for SEPA-zone businesses, and
-            — more recently — an LLM platform and AI agents. My work starts
-            with the <ScribbleUnderline delay={0.2}>domain</ScribbleUnderline>,
-            not the framework.{" "}
+            I build <ScribbleUnderline delay={0.2}>domain-first</ScribbleUnderline> products end-to-end — from government accounting to LLM platforms.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...staggeredTransition, delay: 0.44 }}
+            className="mt-3 max-w-xl text-sm leading-editorial text-text-secondary md:text-[15px]"
+          >
+            Past work spans pharmacy ecommerce, a workforce SaaS for SEPA-zone
+            businesses, and — more recently — an LLM platform and AI agents.{" "}
             <ScribbleUnderline delay={0.5}>Clean architecture</ScribbleUnderline>{" "}
             by habit, tech-agnostic by choice.
           </motion.p>
@@ -388,12 +420,60 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ ...staggeredTransition, delay: 0.43 }}
-            className="mt-6"
+            transition={{ ...staggeredTransition, delay: 0.5 }}
+            className="mt-6 flex flex-wrap items-center gap-3"
           >
-            <div className="mb-3 flex items-center gap-2.5">
-              <span className="h-px w-5 bg-accent/50" />
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
+            <button
+              type="button"
+              onClick={handleCopyEmail}
+              className="group inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-bg-primary shadow-paper transition-all hover:bg-accent-hover hover:shadow-[0_8px_20px_-8px_rgba(26,26,24,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
+              aria-label={emailCopied ? "Email copied to clipboard" : "Get in touch — copy email"}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {emailCopied ? (
+                  <motion.span
+                    key="copied"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <CheckIcon />
+                    Email copied
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="cta"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                    className="inline-flex items-center gap-2"
+                  >
+                    Get in touch
+                    <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+            <a
+              href="#projects"
+              className="inline-flex items-center gap-2 rounded-md border border-accent/25 px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-accent/50 hover:bg-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              See projects
+            </a>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...staggeredTransition, delay: 0.58 }}
+            className="mt-8"
+          >
+            <div className="mb-3 flex items-center gap-3">
+              <span className="h-px w-6 bg-accent/50" />
+              <h3 className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
                 Education
               </h3>
             </div>
@@ -409,7 +489,7 @@ export function Hero() {
                     </span>
                     <span className="text-xs text-text-primary">
                       {edu.field}{" "}
-                      <span className="text-text-muted">· {edu.school}</span>
+                      <span className="text-text-secondary">· {edu.school}</span>
                     </span>
                   </div>
                 </div>
@@ -418,14 +498,15 @@ export function Hero() {
           </motion.div>
 
           <motion.div
+            id="contact"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ ...staggeredTransition, delay: 0.52 }}
-            className="mt-7"
+            transition={{ ...staggeredTransition, delay: 0.66 }}
+            className="mt-7 scroll-mt-24"
           >
-            <div className="mb-3 flex items-center gap-2.5">
-              <span className="h-px w-5 bg-accent/50" />
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
+            <div className="mb-3 flex items-center gap-3">
+              <span className="h-px w-6 bg-accent/50" />
+              <h3 className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
                 Contact
               </h3>
             </div>
@@ -434,7 +515,7 @@ export function Hero() {
                 type="button"
                 onClick={handleCopyEmail}
                 aria-label={emailCopied ? "Email copied" : "Copy email address"}
-                className="group relative flex items-center gap-2.5 rounded-md py-1.5 pl-2 pr-8 text-left transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="group relative flex items-center gap-2.5 rounded-md py-2 pl-2 pr-9 text-left transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border text-text-secondary transition-colors group-hover:border-accent/40 group-hover:text-accent">
                   <EmailIcon />
@@ -449,9 +530,7 @@ export function Hero() {
                 </span>
                 <span
                   aria-hidden="true"
-                  className={`absolute right-2 top-1.5 text-text-muted group-hover:text-accent ${
-                    emailCopied ? "" : "transition-opacity opacity-0 group-hover:opacity-100"
-                  }`}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted opacity-40 transition-opacity group-hover:text-accent group-hover:opacity-100 group-focus-visible:opacity-100"
                 >
                   <AnimatePresence mode="wait" initial={false}>
                     {emailCopied ? (
@@ -484,7 +563,7 @@ export function Hero() {
                 href={siteConfig.githubUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="group flex items-center gap-2.5 rounded-md px-2 py-2 transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border text-text-secondary transition-colors group-hover:border-accent/40 group-hover:text-accent">
                   <GitHubIcon />
@@ -502,11 +581,18 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="md:col-span-5">
+        <div className="space-y-4 md:col-span-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...staggeredTransition, delay: 0.2 }}
+          >
+            <StatusPanel />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...staggeredTransition, delay: 0.28 }}
           >
             <StackPanel />
           </motion.div>

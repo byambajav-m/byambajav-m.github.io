@@ -3,6 +3,7 @@ import { Experience } from "./components/Experience";
 import { Projects } from "./components/Projects";
 import { Footer } from "./components/Footer";
 import { ScrollProgress } from "./components/ScrollProgress";
+import { TopNav } from "./components/TopNav";
 
 export function App() {
   return (
@@ -14,6 +15,7 @@ export function App() {
         Skip to content
       </a>
       <ScrollProgress />
+      <TopNav />
       <main id="main">
         <Hero />
         <Experience />

@@ -22,7 +22,7 @@ export function Experience() {
   return (
     <section
       id="experience"
-      className="relative bg-bg-secondary/60 px-6 py-20 md:px-8 md:py-24"
+      className="relative scroll-mt-16 bg-bg-secondary/60 px-6 py-20 md:px-8 md:py-24"
     >
       <SectionSticker label="Experience" />
       <div className="mx-auto max-w-5xl">
@@ -44,7 +44,9 @@ export function Experience() {
           />
 
           <ol className="space-y-10">
-            {experienceEntries.map((entry, index) => (
+            {experienceEntries.map((entry, index) => {
+              const isCurrent = /present/i.test(entry.period);
+              return (
               <Reveal
                 as="li"
                 key={`${entry.company}-${index}`}
@@ -55,12 +57,23 @@ export function Experience() {
                     aria-hidden="true"
                     className="absolute -left-[27px] top-1.5 flex h-3 w-3 items-center justify-center md:-left-[33px]"
                   >
-                    <span className="absolute inset-0 rounded-full border border-accent/50 bg-bg-primary transition-transform group-hover:scale-125" />
+                    <span className={`absolute inset-0 rounded-full border border-accent/50 bg-bg-primary transition-transform group-hover:scale-125 ${isCurrent ? "" : ""}`} />
                     <span className="relative h-1.5 w-1.5 rounded-full bg-accent" />
+                    {isCurrent && (
+                      <span className="absolute inset-[-4px] animate-ping rounded-full bg-accent/25" />
+                    )}
                   </span>
 
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-text-muted">
-                    {entry.period}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className={`text-[11px] uppercase tracking-[0.22em] ${isCurrent ? "font-medium text-text-secondary" : "text-text-muted"}`}>
+                      {entry.period}
+                    </div>
+                    {isCurrent && (
+                      <span className="inline-flex items-center gap-1 rounded-sm border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-accent">
+                        <span aria-hidden="true" className="h-1 w-1 rounded-full bg-accent" />
+                        Now
+                      </span>
+                    )}
                   </div>
 
                   <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -95,7 +108,8 @@ export function Experience() {
                   </div>
                 </div>
               </Reveal>
-            ))}
+              );
+            })}
           </ol>
         </div>
       </div>

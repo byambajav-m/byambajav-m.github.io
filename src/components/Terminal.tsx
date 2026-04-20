@@ -106,6 +106,7 @@ export function Terminal({
   return (
     <div ref={containerRef} className={className}>
       <div
+        aria-hidden="true"
         className="overflow-hidden rounded-md shadow-paper"
         style={{ border: `1px solid ${BORDER}` }}
       >

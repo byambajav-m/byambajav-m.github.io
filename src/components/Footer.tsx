@@ -51,7 +51,17 @@ export function Footer() {
       <div className="mx-auto max-w-5xl">
         <Terminal commands={commands} />
 
-        <div className="mt-4 flex flex-col items-start justify-between gap-2 text-xs text-text-muted md:flex-row md:items-center">
+        <div className="sr-only" aria-label="Contact">
+          <p>Thanks for scrolling.</p>
+          <p>
+            Email: <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          </p>
+          <p>
+            GitHub: <a href={siteConfig.githubUrl}>{ghDomain}</a>
+          </p>
+        </div>
+
+        <div className="mt-4 flex flex-col items-start justify-between gap-2 text-xs text-text-secondary md:flex-row md:items-center">
           <p>
             © {currentYear} {siteConfig.name}
           </p>

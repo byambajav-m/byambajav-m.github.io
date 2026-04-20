@@ -2,20 +2,24 @@ export type ProjectEntry = {
   featured?: boolean;
   icon: string;
   logo?: string;
+  monogram?: string;
   name: string;
   description: string;
   tags: string[];
   url?: string;
+  access?: string;
 };
 
 export const projectEntries: ProjectEntry[] = [
   {
     featured: true,
     icon: "🏛️",
+    monogram: "eA",
     name: "e-accounting",
     description:
       "Accounting platform for Mongolia's Ministry of Justice and Internal Affairs. I led the engineering side. A multi-tenant system used by public-sector accountants across the ministry — the kind of software people expect to always be there.",
     tags: [],
+    access: "Not publicly accessible",
   },
   {
     icon: "💊",
@@ -56,7 +60,7 @@ export const projectEntries: ProjectEntry[] = [
   {
     icon: "🤖",
     logo: "logos/egune.svg",
-    name: "platform.egune.com",
+    name: "egune Platform",
     description:
       "Platform for egune, Chimege's in-house Mongolian LLM. Accounts, API keys, usage dashboards, billing, developer docs, and the public OpenAI-compatible API at api.egune.com that developers call from Python, Node.js, or cURL.",
     tags: ["React", "TypeScript", "Go", "Python", "API"],
