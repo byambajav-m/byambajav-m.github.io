@@ -393,7 +393,7 @@ export function Hero() {
             transition={{ ...staggeredTransition, delay: 0.28 }}
             className="mt-4 text-base tracking-tight text-text-secondary md:text-lg"
           >
-            Senior Software Engineer
+            Software Engineer
           </motion.p>
 
           <motion.p
@@ -402,7 +402,7 @@ export function Hero() {
             transition={{ ...staggeredTransition, delay: 0.38 }}
             className="mt-5 max-w-xl text-base leading-editorial text-text-primary md:text-lg"
           >
-            I build <ScribbleUnderline delay={0.2}>domain-first</ScribbleUnderline> products end-to-end — from government accounting to LLM platforms.
+            I build products end-to-end with <ScribbleUnderline delay={0.2}>domain-driven design</ScribbleUnderline> and <ScribbleUnderline delay={0.5}>clean architecture</ScribbleUnderline>, lately focused on LLM platforms and AI agents.
           </motion.p>
 
           <motion.p
@@ -411,10 +411,7 @@ export function Hero() {
             transition={{ ...staggeredTransition, delay: 0.44 }}
             className="mt-3 max-w-xl text-sm leading-editorial text-text-secondary md:text-[15px]"
           >
-            Past work spans pharmacy ecommerce, a workforce SaaS for SEPA-zone
-            businesses, and — more recently — an LLM platform and AI agents.{" "}
-            <ScribbleUnderline delay={0.5}>Clean architecture</ScribbleUnderline>{" "}
-            by habit, tech-agnostic by choice.
+            Before that: accounting, a pharmacy ecommerce, and a workforce SaaS for SEPA-zone businesses. Pragmatic about the stack — I pick what fits the problem.
           </motion.p>
 
           <motion.div
