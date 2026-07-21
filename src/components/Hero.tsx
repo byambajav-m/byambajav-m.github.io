@@ -406,14 +406,30 @@ export function Hero() {
             />
           </div>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...staggeredTransition, delay: 0.28 }}
-            className="mt-4 text-base tracking-tight text-text-secondary md:text-lg"
+            className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2"
           >
-            Software Engineer
-          </motion.p>
+            <p className="text-base tracking-tight text-text-secondary md:text-lg">
+              Software Engineer
+            </p>
+            <span aria-hidden="true" className="hidden h-1 w-1 rounded-full bg-text-muted/50 sm:block" />
+            <a
+              href={siteConfig.cvPath}
+              download="Byambajav-Munkhbayar-CV.pdf"
+              type="application/pdf"
+              className="group inline-flex items-center gap-2 rounded-full border border-border bg-bg-card/80 px-3 py-1.5 text-xs font-medium text-text-secondary shadow-paper transition-all hover:-translate-y-0.5 hover:border-accent/30 hover:bg-bg-card hover:text-text-primary hover:shadow-[0_8px_18px_-12px_rgba(26,26,24,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
+              aria-label="Download Byambajav Munkhbayar's résumé as a PDF"
+            >
+              <DownloadIcon />
+              <span>Résumé</span>
+              <span className="border-l border-border pl-2 font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors group-hover:text-text-secondary">
+                PDF
+              </span>
+            </a>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -473,22 +489,6 @@ export function Hero() {
                 )}
               </AnimatePresence>
             </button>
-            <a
-              href={siteConfig.cvPath}
-              download="Byambajav-Munkhbayar-CV.pdf"
-              type="application/pdf"
-              className="group inline-flex items-center gap-2 rounded-md border border-accent/25 px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-accent/50 hover:bg-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              aria-label="Download Byambajav Munkhbayar's CV as a PDF"
-            >
-              <DownloadIcon />
-              Download CV
-              <span
-                aria-hidden="true"
-                className="text-text-muted transition-transform group-hover:translate-y-0.5"
-              >
-                ↓
-              </span>
-            </a>
             <a
               href="#projects"
               className="link-underline inline-flex items-center gap-2 rounded-sm px-1 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
