@@ -4,4 +4,5 @@ export const siteConfig = {
   githubUrl: "https://github.com/byambajav-m",
   repoName: "portfolio",
   photoPath: `${import.meta.env.BASE_URL}profile.jpeg`,
+  cvPath: `${import.meta.env.BASE_URL}byambajav-munkhbayar-cv.pdf`,
 };

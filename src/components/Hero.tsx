@@ -40,9 +40,28 @@ function CapIcon() {
   );
 }
 
+function DownloadIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"
+      />
+    </svg>
+  );
+}
+
 const educationEntries = [
   {
-    degree: "Master's",
+    degree: "Master's · In Progress",
     field: "Artificial Intelligence",
     school: "National University of Mongolia",
   },
@@ -455,8 +474,24 @@ export function Hero() {
               </AnimatePresence>
             </button>
             <a
+              href={siteConfig.cvPath}
+              download="Byambajav-Munkhbayar-CV.pdf"
+              type="application/pdf"
+              className="group inline-flex items-center gap-2 rounded-md border border-accent/25 px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-accent/50 hover:bg-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              aria-label="Download Byambajav Munkhbayar's CV as a PDF"
+            >
+              <DownloadIcon />
+              Download CV
+              <span
+                aria-hidden="true"
+                className="text-text-muted transition-transform group-hover:translate-y-0.5"
+              >
+                ↓
+              </span>
+            </a>
+            <a
               href="#projects"
-              className="inline-flex items-center gap-2 rounded-md border border-accent/25 px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-accent/50 hover:bg-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="link-underline inline-flex items-center gap-2 rounded-sm px-1 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               See projects
             </a>
