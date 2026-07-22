@@ -42,7 +42,7 @@ export const experienceEntries: ExperienceEntry[] = [
     url: "https://erin.systems",
     role: "Fullstack Engineer · Development Manager",
     description:
-      "I was able to contribute to Gastromatic, a workforce management SaaS for SEPA-zone businesses, building its customer-relations and digital-contract microservices. I also led engineering on e-accounting.mojha.gov.mn (accounting platform for Mongolia's Ministry of Justice and Internal Affairs) and contributed to an LMS called Jarvis.",
+      "Contributed to Gastromatic as a software developer, working on its customer-relations and digital-contract microservices. I also led engineering on e-accounting.mojha.gov.mn (accounting platform for Mongolia's Ministry of Justice and Internal Affairs) and contributed to an LMS called Jarvis.",
     tags: [
       "Tech Lead",
       "Java Spring Boot",

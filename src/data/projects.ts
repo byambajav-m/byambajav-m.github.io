@@ -35,7 +35,7 @@ export const projectEntries: ProjectEntry[] = [
     logo: "logos/gastromatic.svg",
     name: "Gastromatic",
     description:
-      "Shift and workforce management SaaS. Full-stack work on scheduling, payroll-adjacent flows, and the admin tooling around them.",
+      "Workforce management SaaS where I contributed as a software developer, working on customer-relations and digital-contract microservices.",
     tags: ["Java Spring Boot", "React", "PostgreSQL"],
     url: "https://gastromatic.com",
   },

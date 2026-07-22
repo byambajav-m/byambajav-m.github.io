@@ -4,8 +4,12 @@ import { Projects } from "./components/Projects";
 import { Footer } from "./components/Footer";
 import { ScrollProgress } from "./components/ScrollProgress";
 import { TopNav } from "./components/TopNav";
+import { ChatWidget } from "./chat/ChatWidget";
+import { usePortfolioChat } from "./chat/usePortfolioChat";
 
 export function App() {
+  const chat = usePortfolioChat();
+
   return (
     <div className="relative min-h-screen bg-bg-primary text-text-primary">
       <a
@@ -22,6 +26,7 @@ export function App() {
         <Projects />
       </main>
       <Footer />
+      <ChatWidget chat={chat} />
     </div>
   );
 }
