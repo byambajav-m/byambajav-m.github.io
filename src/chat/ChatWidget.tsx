@@ -9,10 +9,9 @@ import {
 import type { PortfolioChatController } from "./usePortfolioChat";
 
 const suggestions = [
-  "Summarize your experience in 30 seconds.",
-  "Which project best shows your backend skills?",
-  "What technologies do you work with?",
-  "Tell me about your AI and LLM experience.",
+  "What are you working on now?",
+  "Which project best shows your backend work?",
+  "Tell me about your AI experience.",
 ];
 
 function AssistantMark() {
@@ -47,6 +46,7 @@ type Props = {
 
 export function ChatWidget({ chat }: Props) {
   const [draft, setDraft] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -54,10 +54,18 @@ export function ChatWidget({ chat }: Props) {
   const maxLength = chat.status?.maxMessageChars ?? 800;
 
   useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
     if (!chat.isOpen) return;
     const previousFocus = document.activeElement as HTMLElement | null;
     const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (isMobile) document.body.style.overflow = "hidden";
     window.requestAnimationFrame(() => inputRef.current?.focus());
 
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
@@ -65,7 +73,7 @@ export function ChatWidget({ chat }: Props) {
         chat.setIsOpen(false);
         return;
       }
-      if (event.key !== "Tab" || !panelRef.current) return;
+      if (event.key !== "Tab" || !isMobile || !panelRef.current) return;
       const focusable = Array.from(
         panelRef.current.querySelectorAll<HTMLElement>(
           'button:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
@@ -85,11 +93,11 @@ export function ChatWidget({ chat }: Props) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = originalOverflow;
+      if (isMobile) document.body.style.overflow = originalOverflow;
       window.removeEventListener("keydown", handleKeyDown);
       previousFocus?.focus();
     };
-  }, [chat.isOpen, chat.setIsOpen]);
+  }, [chat.isOpen, chat.setIsOpen, isMobile]);
 
   useEffect(() => {
     if (!chat.isOpen) return;
@@ -143,7 +151,7 @@ export function ChatWidget({ chat }: Props) {
       <AnimatePresence>
         {chat.isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-text-primary/20 backdrop-blur-[2px] md:bg-transparent md:backdrop-blur-none"
+            className="pointer-events-none fixed inset-0 z-50 bg-text-primary/20 backdrop-blur-[2px] md:bg-transparent md:backdrop-blur-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -151,7 +159,7 @@ export function ChatWidget({ chat }: Props) {
           >
             <button
               type="button"
-              className="absolute inset-0 cursor-default md:hidden"
+              className="pointer-events-auto absolute inset-0 cursor-default md:hidden"
               onClick={() => chat.setIsOpen(false)}
               aria-label="Close portfolio assistant"
               tabIndex={-1}
@@ -159,24 +167,24 @@ export function ChatWidget({ chat }: Props) {
             <motion.div
               ref={panelRef}
               role="dialog"
-              aria-modal="true"
+              aria-modal={isMobile}
               aria-labelledby="portfolio-chat-title"
               initial={{ opacity: 0, y: 36, scale: 0.985 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 24, scale: 0.985 }}
               transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
-              className="pointer-events-auto absolute inset-x-0 bottom-0 flex max-h-[88dvh] min-h-[560px] flex-col overflow-hidden rounded-t-xl border border-border bg-bg-card shadow-[0_28px_90px_-24px_rgba(26,26,24,0.42)] md:bottom-5 md:left-auto md:right-5 md:top-20 md:h-auto md:max-h-none md:min-h-0 md:w-[420px] md:rounded-lg"
+              className="pointer-events-auto absolute inset-x-3 bottom-3 flex h-[min(700px,calc(100dvh-1.5rem))] max-h-[calc(100dvh-1.5rem)] flex-col overflow-hidden rounded-xl border border-border bg-bg-card shadow-[0_24px_70px_-24px_rgba(26,26,24,0.38)] md:inset-x-auto md:bottom-6 md:right-6 md:h-[min(590px,calc(100dvh-3rem))] md:w-[400px]"
             >
-              <header className="flex items-center justify-between border-b border-border bg-bg-primary px-4 py-3.5">
+              <header className="flex items-center justify-between border-b border-border bg-bg-card px-4 py-3.5">
                 <div className="flex min-w-0 items-center gap-3">
                   <AssistantMark />
                   <div className="min-w-0">
                     <h2 id="portfolio-chat-title" className="truncate font-mono text-xs font-semibold text-text-primary">
-                      portfolio.agent
+                      Byambajav AI
                     </h2>
                     <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-text-muted">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" aria-hidden="true" />
-                      Ready to answer
+                      Portfolio assistant
                     </p>
                   </div>
                 </div>
@@ -201,32 +209,32 @@ export function ChatWidget({ chat }: Props) {
                 </div>
               </header>
 
-              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5" aria-live="polite">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4" aria-live="polite">
                 {chat.messages.length === 0 ? (
-                  <div className="flex min-h-full flex-col justify-center">
+                  <div className="flex min-h-full flex-col justify-start pt-5 md:justify-center md:pt-0">
                     <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-muted">
                       Ask the portfolio
                     </p>
-                    <h3 className="mt-2 text-xl font-semibold tracking-tight text-text-primary">
-                      Curious about my work?
+                    <h3 className="mt-2 text-lg font-semibold tracking-tight text-text-primary">
+                      What would you like to know?
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                      Ask about my experience, projects, technical background, or education. Answers come from information in this portfolio.
+                    <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                      Ask about my experience, projects, skills, education, or interests.
                     </p>
-                    <div className="mt-6 grid gap-2">
+                    <div className="mt-5 grid gap-2">
                       {suggestions.map((suggestion) => (
                         <button
                           type="button"
                           key={suggestion}
                           onClick={() => void chat.sendMessage(suggestion)}
-                          className="group flex items-center justify-between gap-3 rounded-md border border-border bg-bg-primary/55 px-3.5 py-3 text-left text-xs leading-relaxed text-text-primary transition-all hover:border-accent/25 hover:bg-bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          className="group flex items-center justify-between gap-3 rounded-md border border-border bg-bg-primary/55 px-3.5 py-2.5 text-left text-xs leading-relaxed text-text-primary transition-all hover:border-accent/25 hover:bg-bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                         >
                           <span>{suggestion}</span>
                           <span aria-hidden="true" className="shrink-0 font-mono text-text-muted transition-transform group-hover:translate-x-0.5">→</span>
                         </button>
                       ))}
                     </div>
-                    <p className="mt-5 text-[10px] leading-relaxed text-text-muted">
+                    <p className="mt-4 text-[10px] leading-relaxed text-text-muted">
                       AI-generated answers can make mistakes. For anything important, contact me directly.
                     </p>
                   </div>
@@ -269,24 +277,19 @@ export function ChatWidget({ chat }: Props) {
 
               <footer className="border-t border-border bg-bg-card px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
                 <form onSubmit={submit} className="rounded-md border border-border bg-bg-primary/55 p-2 transition-colors focus-within:border-accent/30 focus-within:bg-bg-primary">
-                  <textarea
-                    ref={inputRef}
-                    rows={1}
-                    value={draft}
-                    maxLength={maxLength}
-                    disabled={chat.isStreaming}
-                    onChange={(event) => setDraft(event.target.value)}
-                    onKeyDown={handleInputKeyDown}
-                    placeholder="Ask about my work…"
-                    aria-label="Message the portfolio assistant"
-                    className="max-h-28 min-h-[42px] w-full resize-none bg-transparent px-2 py-2 text-sm leading-relaxed text-text-primary outline-none placeholder:text-text-muted disabled:cursor-not-allowed disabled:opacity-60"
-                  />
-                  <div className="flex items-center justify-between gap-3 px-1">
-                    <span className="font-mono text-[9px] text-text-muted">
-                      {chat.remainingTurns === null
-                        ? "Enter to send · Shift+Enter for a line break"
-                        : `${chat.remainingTurns} questions remaining`}
-                    </span>
+                  <div className="flex items-end gap-2">
+                    <textarea
+                      ref={inputRef}
+                      rows={1}
+                      value={draft}
+                      maxLength={maxLength}
+                      disabled={chat.isStreaming}
+                      onChange={(event) => setDraft(event.target.value)}
+                      onKeyDown={handleInputKeyDown}
+                      placeholder="Ask about my work…"
+                      aria-label="Message the portfolio assistant"
+                      className="max-h-24 min-h-[38px] min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-relaxed text-text-primary outline-none placeholder:text-text-muted disabled:cursor-not-allowed disabled:opacity-60"
+                    />
                     {chat.isStreaming ? (
                       <button
                         type="button"
@@ -306,6 +309,13 @@ export function ChatWidget({ chat }: Props) {
                         ↑
                       </button>
                     )}
+                  </div>
+                  <div className="px-2 pb-0.5 pt-1">
+                    <span className="font-mono text-[9px] text-text-muted">
+                      {chat.remainingTurns === null
+                        ? "Enter to send · Shift+Enter for a line break"
+                        : `${chat.remainingTurns} questions remaining`}
+                    </span>
                   </div>
                 </form>
               </footer>

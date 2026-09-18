@@ -381,7 +381,7 @@ def build_cv():
         Spacer(1, 43 * mm),
         sidebar_heading("Contact"),
         Paragraph("LOCATION", styles["SideLabel"]),
-        Paragraph("Ulaanbaatar, Mongolia", styles["SideText"]),
+        Paragraph("Sapporo, Japan", styles["SideText"]),
         Paragraph("EMAIL", styles["SideLabel"]),
         Paragraph(
             "<link href='mailto:byambajav.mun@gmail.com' color='#EAE5DC'>byambajav.mun@gmail.com</link>",

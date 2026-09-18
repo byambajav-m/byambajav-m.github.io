@@ -181,7 +181,7 @@ function StatusPanel() {
           </p>
         </div>
         <p className="pl-[14px] text-text-muted">
-          Based in Ulaanbaatar · open to remote.
+          Based in Sapporo, Japan · open to remote.
         </p>
       </div>
     </div>
